@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class Note {
-    @Column(name = "id")
+    @Column(name = "note_id")
     private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
     @Column(name = "title")
     private String title;
@@ -21,9 +21,13 @@ public class Note {
     private String content;
     @Column(name = "cratedOn")
     private LocalDate createdOn = LocalDate.now();
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User createdBy;
 
-    public Note(String title, String content) {
+    public Note(String title, String content, User createdBy) {
         this.title = title;
         this.content = content;
+        this.createdBy = createdBy;
     }
 }

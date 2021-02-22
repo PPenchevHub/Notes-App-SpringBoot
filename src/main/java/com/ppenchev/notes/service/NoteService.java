@@ -1,5 +1,6 @@
 package com.ppenchev.notes.service;
 
+import com.ppenchev.notes.exceptions.RessourceNotFoundException;
 import com.ppenchev.notes.model.Note;
 import com.ppenchev.notes.repositories.NoteRepository;
 import lombok.AllArgsConstructor;
@@ -7,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -15,8 +15,12 @@ public class NoteService {
 
     private NoteRepository noteRepository;
 
-    public Note addNote(Note note){
-        return this.noteRepository.save(note);
+    public HttpStatus addNote(Note note){
+        if(note != null) {
+            this.noteRepository.save(note);
+            return HttpStatus.CREATED;
+        }
+        else return HttpStatus.NO_CONTENT;
     }
     public List<Note> getAllNotes(){
         return this.noteRepository.findAll();
@@ -29,8 +33,8 @@ public class NoteService {
         return null;
     }
     public Note findNoteById(Long id){
-        Optional<Note> note = noteRepository.findById(id);
-         return noteRepository.findById(id).orElseThrow(() -> new IllegalArgumentException());
+         return noteRepository.findById(id).orElseThrow(() ->
+                 new RessourceNotFoundException("No Note found with id: " + id));
     }
     public Note updateNote(Long id, Note note){
        Note temp = this.findNoteById(id);
